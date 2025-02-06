@@ -1,5 +1,5 @@
 <?php
-    $nombre = "Pako Gomez";
+    $nombre = "Paco Gomez";
     setcookie("nombre",$nombre,time()+3600);
 ?>
 <!DOCTYPE html>
@@ -11,6 +11,6 @@
 </head>
 <body>
     <h1>Mi primera cookie</h1>
-    <p><?php echo 'Hola ' . htmlspecialchars($_COOKIE["nombre"]) . '!';?></p>
+    <p><?php   echo 'Hola '.htmlspecialchars($_COOKIE["nombre"]) .'!'?></p>
 </body>
 </html>

@@ -8,3 +8,5 @@ Route::get('/', function () {
 });
 
 Route::get('/cookie', [SeguridadController::class,'cookie']);
+Route::get('/sesionget', [SeguridadController::class,'sesionget']);
+Route::get('/sesionset/{nombre}', [SeguridadController::class,'sesionset']);
