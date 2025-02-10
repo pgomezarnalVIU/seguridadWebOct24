@@ -1,26 +1,46 @@
 <?php
-    //Comprobamos usuario y password
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $usuario_valido = "admin";
-        $password_valida = "1234";
-        $usuario = $_POST['usuario'];
-        $password = $_POST['password'];
-        if ($usuario === $usuario_valido && $password === $password_valida) {
-            $msg="<div class='alert alert-success mt-3'>Inicio de sesión exitoso</div>";
-        } else {
-            header("location:index.php");
-        }  
-        session_start();
-        if(!isset($_SESSION['user'])){
-            $_SESSION['user'] =$usuario_valido;
+    // Configuración de acceso a la base de datos
+    $host = "localhost";
+    $dbname = "seguridadwebsesion";
+    $dbUser = "root";
+    $dbPass = "";
+    $mensaje = "";
+    try {
+        // Conexión a la base de datos usando PDO
+        $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $dbUser, $dbPass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Comprobamos que se hayan enviado los datos por POST
+        if (isset($_POST['usuario']) && isset($_POST['pass'])) {
+            $usuario = $_POST['usuario'];
+            $pass   = $_POST['pass'];
+
+        // Preparamos la consulta para evitar inyecciones SQL
+            $stmt = $conn->prepare("SELECT * FROM usuarios WHERE nombre = :usuario");
+            $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+            $stmt->execute();
+            // Obtenemos la fila (si existe)
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Verificamos si hubo resultado y la contraseña coincide
+            if ($result && $pass==$result['pass']) {
+                // Contraseña válida
+                session_start();
+                $_SESSION['user']=$usuario;
+                $mensaje="¡Inicio de sesión exitoso!";
+                // Aquí puedes iniciar sesión con session_start(), redireccionar, etc.
+                } else {
+                    // Usuario o contraseña inválidos
+                    $mensaje="Usuario o contraseña incorrectos.";
+                }
+            } else {
+                $mensaje="No se han recibido datos de usuario y contraseña.";
+            }
+        
+        } catch (PDOException $e) {
+            // Captura e imprime errores en caso de que algo falle en la conexión o la consulta
+            $mensaje="Error en la conexión a la base de datos: " . $e->getMessage();
         }
-        $usuarioRegistrado=$_SESSION['user'];
-        $_SESSION['favcolor']='red';
-        $_SESSION['animal']='cat';
-        $_SESSION['time']=time();
-    }else{
-        header("location:index.php");
-    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,13 +50,15 @@
     <title>Ejemplo de session activa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="content vh-100 bg-light">
-    <h1>Comprobacion de la sesion activa</h1>
-    <p>usuario: <?=$usuarioRegistrado?></p>
-    <p>favcolor: <?=$_SESSION['favcolor']?></p>
-    <p>animal: <?=$_SESSION['animal']?></p>
-    <p>fecha: <?=$_SESSION['time']?></p>
-    <a href="logout.php" class="btn btn-primary" >Salir de la sesion</a>
+<body class="vh-100 bg-light container">
+    <h1>Comprobacion del usuario</h1>
+    <p><?=$mensaje?></p>
+    <p>Sesion: <?=print $_COOKIE['PHPSESSID'];?></p>
+    <p>Usuario: <?=$usuario?></p>
+    <div>
+        <a class="btn btn-primary mr-5" href="logout.php" role="button">Logout</a>
+        <a class="btn btn-primary" href="solicitudes.php" role="button">Solicitud</a>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

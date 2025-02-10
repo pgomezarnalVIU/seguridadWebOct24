@@ -1,5 +1,5 @@
 <?php
-    session_id('p5tue0jj0u91b8gecqiknhvbgg');
+    session_id('c06pp8gk8r261s8750f5ilehvr');
     session_start();
     //$usuarioRegistrado=$_SESSION['user'];
     //Comprueba que estamos registrados
@@ -9,9 +9,6 @@
         //header("location:signin.php");
     }
     $usuarioRegistrado=$_SESSION['user'];
-    //$color = $_SESSION['favcolor'];
-    //$animal = $_SESSION['animal'];
-    //$fecha =  $_SESSION['time'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,8 +20,5 @@
 <body>
     <h1>Comprobacion de la sesion activa</h1>
     <p>usuario: <?=$usuarioRegistrado?></p>
-    <p>favcolor: <?=$color?></p>
-    <p>animal: <?=$animal?></p>
-    <p>fecha: <?=$fecha?></p>
 </body>
 </html>
